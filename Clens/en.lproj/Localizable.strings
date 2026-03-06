@@ -1,0 +1,70 @@
+"Clens PRO" = "Clens PRO";
+"写真を整理して空き容量を増やしましょう" = "Organize photos and free up space";
+"ライブラリを最適化中..." = "Optimizing library...";
+"クリーニングの準備完了" = "Ready for Cleanup";
+"重複した写真を見つけて、\nストレージに余裕を持たせましょう。" = "Find duplicate photos and\nfree up your storage.";
+"全件スキャン開始" = "Start Full Scan";
+"スキャン開始" = "Start Scan";
+
+"表示モード" = "View Mode";
+"整理 (%lld)" = "Cleanup (%lld)";
+"未共有 (%lld)" = "Unshared (%lld)";
+"端末外 (%lld)" = "Missing (%lld)";
+
+"読み込み済み" = "Loaded";
+"不要な写真" = "Unneeded";
+"削減可能な容量" = "Savable Space";
+"方法" = "Method";
+"削除" = "Delete";
+"アルバム" = "Album";
+
+"%lld枚を一括削除" = "Delete %lld Items";
+"%lld枚をアルバムへ移動" = "Move %lld to Album";
+"%lld枚を端末に保存" = "Save %lld to Device";
+
+"デバイス内" = "On Device";
+"共有アルバム" = "Shared Album";
+
+"重複写真を削除しますか？" = "Delete Duplicate Photos?";
+"キャンセル" = "Cancel";
+"削除する" = "Delete";
+"選択されたローカル写真をゴミ箱へ移動します。30日以内であれば復元可能です。" = "Selected local photos will be moved to Trash. They can be recovered within 30 days.";
+
+"完了" = "Done";
+"OK" = "OK";
+"写真アプリを開く" = "Open Photos App";
+"%lld枚の写真をライブラリに保存しました。" = "Saved %lld photos to your library.";
+
+"この端末にはありますが、共有アルバムに同じ写真が見つかりませんでした。" = "Found on this device, but no matching photos in the Shared Album.";
+"共有アルバムにありますが、この端末内には見つかりませんでした。" = "Found in the Shared Album, but missing from this device.";
+
+// Onboarding
+"Clensへようこそ" = "Welcome to Clens";
+"iPhoneに溜まった似たような写真や、共有アルバムに保存済みの不要な写真を自動で探し出します。" = "Automatically find visually similar photos and unneeded images already backed up in Shared Albums.";
+"3つの賢いタブ" = "Three Smart Tabs";
+"「重複写真」「共有アルバム未保存」「端末にない共有写真」の3つの視点から、あなたのライブラリを完璧に管理します。" = "Perfectly manage your library across 'Duplicates', 'Not in Shared', and 'Missing Locally' views.";
+"安全な整理プロセス" = "Safe Processing";
+"削除した写真はiPhoneの「最近削除した項目」に30日間保持されるため、間違えて消しても安心です。" = "Deleted photos are kept in the 'Recently Deleted' folder for 30 days, so you can always recover mistakes safely.";
+"使い始める" = "Get Started";
+
+// Paywall
+"制限を解除して、iPhoneのストレージを\n最大限まで解放しましょう。" = "Unlock unlimited cleanups and\nmaximize your storage.";
+"無制限の整理" = "Unlimited Cleanups";
+"1日50枚の制限がなくなり、何枚でも整理可能になります。" = "Remove the 50 photos/day limit and clean up as many as you want.";
+"最優先サポート" = "Priority Support";
+"開発者が優先的にご要望や不具合に対応します。" = "Get priority assistance and feature requests directly from the developer.";
+"開発の支援" = "Support Development";
+"今後の新機能追加やアップデートの支援になります。" = "Help fund future updates and exciting new features.";
+"PROにアップグレード" = "Upgrade to PRO";
+"購入情報を復元する" = "Restore Purchases";
+"¥480 / 買い切り" = "$3.99 / One-time";
+"アップグレード完了" = "Upgraded";
+"PROにアップグレードして制限を解除" = "Upgrade to PRO to unlock limits";
+"PRO版が有効です" = "PRO version is active";
+
+// Settings
+"AI判定の設定" = "AI Match Sensitivity";
+"AI判定のしきい値" = "Value";
+"低 (すべて拾う)" = "Low (Catch all)";
+"高 (厳格に判定)" = "High (Strict)";
+"しきい値を下げると、少しでも似ている写真を「重複」として検知します。上げると、ほぼ同じ写真のみを「重複」とみなします。標準は70〜80%以上が推奨です。" = "Lowering the sensitivity will detect slightly similar photos as duplicates. Higher sensitivity requires photos to be nearly identical. 70-80% is recommended.";
