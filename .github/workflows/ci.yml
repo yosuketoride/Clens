@@ -17,7 +17,7 @@ jobs:
 
       - name: Select latest Xcode
         run: |
-          XCODE=$(ls /Applications/Xcode*.app | sort -V | tail -1)
+          XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
           echo "Using: $XCODE"
           sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
