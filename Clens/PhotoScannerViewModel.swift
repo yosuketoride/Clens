@@ -31,12 +31,19 @@ enum CleanupMode: String {
     case moveToAlbum = "moveToAlbum"
 }
 
+struct AlbumGroup: Identifiable {
+    let id: String
+    let title: String
+    var assets: [PHAsset]
+}
+
 @MainActor
 class PhotoScannerViewModel: ObservableObject {
     @Published var isScanning = false
     @Published var matches: [PhotoMatch] = []
     @Published var unmatchedAssets: [PHAsset] = [] // 端末にあるが共有アルバムにない
-    @Published var missingFromLocalAssets: [PHAsset] = [] // 共有アルバムにあるが端末にない
+    @Published var missingFromLocalAssets: [PHAsset] = [] // 共有アルバムにあるが端末にない (フラットリスト)
+    @Published var groupedMissingAssets: [AlbumGroup] = [] // 共有アルバムにあるが端末にない (アルバム別)
     @Published var processedCount = 0
     @Published var totalCount = 0
     @Published var totalSavedBytes: Int64 = 0
@@ -45,8 +52,10 @@ class PhotoScannerViewModel: ObservableObject {
     @Published var isShowingSuccessMessage = false
     @Published var isShowingSettings = false
     @Published var lastCleanupCount = 0
+    @Published var lastCleanupSavedBytes: Int64 = 0
     @Published var lastActionType: ActionType = .cleanup
     @Published var selectedMissingAssetIds: Set<String> = [] // 端末外タブでの選択
+    @Published var selectedUnmatchedAssetIds: Set<String> = [] // 未共有タブでの選択
     @Published var displayMode: DisplayMode = .duplicates
     
     enum ActionType {
@@ -56,7 +65,7 @@ class PhotoScannerViewModel: ObservableObject {
     
     // 設定関連
     @AppStorage("cleanupMode") var cleanupMode: CleanupMode = .delete
-    @AppStorage("aiSensitivity") var aiSensitivity: Double = 50.0 {
+    @AppStorage("aiSensitivity") var aiSensitivity: Double = 90.0 {
         didSet {
             applyFiltering()
         }
@@ -68,11 +77,23 @@ class PhotoScannerViewModel: ObservableObject {
     @AppStorage("todayCleanedCount") var todayCleanedCount: Int = 0
     @AppStorage("lastCleanupDate") var lastCleanupDateString: String = ""
     
+    @AppStorage("totalActionsPerformed") var totalActionsPerformed: Int = 0
+    @AppStorage("lastReviewRequestDate") var lastReviewRequestDate: Double = 0
+    @AppStorage("hasCompletedFirstScan") var hasCompletedFirstScan: Bool = false
+    @AppStorage("totalScanCount") var totalScanCount: Int = 0
+    
+    // 残り無料枠の計算
+    var remainingFreeCount: Int {
+        if isPremium { return Int.max }
+        return max(0, dailyFreeLimit - todayCleanedCount)
+    }
+    
     @Published var isShowingPaywall = false
+    @Published var isShowingUnmatched = false
     
     private var allFoundMatches: [PhotoMatch] = []
     private var allLocalAssets: [PHAsset] = []
-    private var allSharedAssets: [PHAsset] = []
+    private var allSharedAssets: [SharedAsset] = []
     
     private let engine = ImageMatchingEngine()
     private let logger = Logger(subsystem: "com.example.SharedAlbumCleaner", category: "ViewModel")
@@ -90,6 +111,7 @@ class PhotoScannerViewModel: ObservableObject {
         matches.removeAll()
         unmatchedAssets.removeAll()
         missingFromLocalAssets.removeAll()
+        groupedMissingAssets.removeAll()
         selectedMissingAssetIds.removeAll()
         processedCount = 0
         totalSavedBytes = 0
@@ -111,11 +133,12 @@ class PhotoScannerViewModel: ObservableObject {
             
             let results = try await engine.findMatches(
                 localAssets: localAssets,
-                sharedAssets: sharedAssets,
+                sharedAssets: sharedAssets.map { $0.asset },
                 customThreshold: threshold
             ) { [weak self] current, total in
+                guard let self else { return }
                 Task { @MainActor in
-                    self?.processedCount = current
+                    self.processedCount = current
                 }
             }
             
@@ -128,6 +151,8 @@ class PhotoScannerViewModel: ObservableObject {
         }
         
         isScanning = false
+        totalScanCount += 1
+        hasCompletedFirstScan = true
     }
     
     private func applyFiltering() {
@@ -136,23 +161,52 @@ class PhotoScannerViewModel: ObservableObject {
         let localAssets = self.allLocalAssets
         let sharedAssets = self.allSharedAssets
         
-        Task.detached {
-            let filtered = foundMatches.filter { $0.similarityPercentage >= minPercentage }
-            
-            let matchedLocalIds = Set(filtered.map { $0.localAsset.localIdentifier })
-            let unmatched = localAssets.filter { !matchedLocalIds.contains($0.localIdentifier) }
-            
-            let matchedSharedIds = Set(filtered.map { $0.sharedAsset.localIdentifier })
-            let missingLocal = sharedAssets.filter { !matchedSharedIds.contains($0.localIdentifier) }
-            
-            await MainActor.run {
-                self.matches = filtered
-                self.unmatchedAssets = unmatched
-                self.missingFromLocalAssets = missingLocal
-                self.updateStats()
+        let filtered = foundMatches.filter { $0.similarityPercentage >= minPercentage }
+        
+        let matchedLocalIds = Set(filtered.map { $0.localAsset.localIdentifier })
+        let unmatched = localAssets.filter { !matchedLocalIds.contains($0.localIdentifier) }
+        
+        let matchedSharedIds = Set(filtered.map { $0.sharedAsset.localIdentifier })
+        let missingLocalFull = sharedAssets.filter { !matchedSharedIds.contains($0.asset.localIdentifier) }
+        
+        let flatMissing = missingLocalFull.map { $0.asset }
+        
+        var dict: [String: AlbumGroup] = [:]
+        for sa in missingLocalFull {
+            if var group = dict[sa.albumId] {
+                group.assets.append(sa.asset)
+                dict[sa.albumId] = group
+            } else {
+                dict[sa.albumId] = AlbumGroup(id: sa.albumId, title: sa.albumTitle, assets: [sa.asset])
             }
         }
+        let sortedGroups = dict.values.sorted { $0.title < $1.title }
+        
+        var uiOrder: [PHAsset] = []
+        for group in sortedGroups {
+            uiOrder.append(contentsOf: group.assets)
+        }
+        
+        let freeLimit = remainingFreeCount
+        self.matches = filtered.enumerated().map { index, match in
+            var updatedMatch = match
+            // 非プレミアムなら残り枠数まではデフォルト選択、それ以降は解除
+            if !isPremium && index >= freeLimit {
+                updatedMatch.isSelected = false
+            } else {
+                updatedMatch.isSelected = true
+            }
+            return updatedMatch
+        }
+        self.unmatchedAssets = unmatched
+        self.missingFromLocalAssets = flatMissing
+        self.groupedMissingAssets = sortedGroups
+        self.missingAssetsInUIOrder = uiOrder
+        self.updateStats()
     }
+    
+    // 端末外タブの表示順リスト
+    @Published var missingAssetsInUIOrder: [PHAsset] = []
     
     // 統計情報の更新
     private func updateStats() {
@@ -164,8 +218,8 @@ class PhotoScannerViewModel: ObservableObject {
     }
     
     // 選択状態のトグル
-    func toggleSelection(for matchId: UUID) {
-        if let index = matches.firstIndex(where: { $0.id == matchId }) {
+    func toggleSelection(match: PhotoMatch) {
+        if let index = matches.firstIndex(where: { $0.id == match.id }) {
             matches[index].isSelected.toggle()
             updateStats()
         }
@@ -188,9 +242,59 @@ class PhotoScannerViewModel: ObservableObject {
         }
     }
     
+    // 端末外タブの一括選択・解除
+    func selectMissingAssets(ids: Set<String>, selected: Bool) {
+        if selected {
+            selectedMissingAssetIds.formUnion(ids)
+        } else {
+            selectedMissingAssetIds.subtract(ids)
+        }
+    }
+    
+    // 端末外タブの範囲選択
+    func selectMissingRange(fromId: String, toId: String, selected: Bool) {
+        let allIds = missingAssetsInUIOrder.map { $0.localIdentifier }
+        guard let startIndex = allIds.firstIndex(of: fromId),
+              let endIndex = allIds.firstIndex(of: toId) else { return }
+        
+        let lower = min(startIndex, endIndex)
+        let upper = max(startIndex, endIndex)
+        let rangeIds = Set(allIds[lower...upper])
+        
+        selectMissingAssets(ids: rangeIds, selected: selected)
+    }
+    
+    // 未共有タブの選択トグル
+    func toggleUnmatchedSelection(for assetId: String) {
+        if selectedUnmatchedAssetIds.contains(assetId) {
+            selectedUnmatchedAssetIds.remove(assetId)
+        } else {
+            selectedUnmatchedAssetIds.insert(assetId)
+        }
+    }
+    
+    // 未共有タブの範囲選択
+    func selectUnmatchedRange(fromId: String, toId: String, selected: Bool) {
+        let allIds = unmatchedAssets.map { $0.localIdentifier }
+        guard let startIndex = allIds.firstIndex(of: fromId),
+              let endIndex = allIds.firstIndex(of: toId) else { return }
+        
+        let lower = min(startIndex, endIndex)
+        let upper = max(startIndex, endIndex)
+        let rangeIds = Set(allIds[lower...upper])
+        
+        if selected {
+            selectedUnmatchedAssetIds.formUnion(rangeIds)
+        } else {
+            selectedUnmatchedAssetIds.subtract(rangeIds)
+        }
+    }
+    
     // 整理の実行（設定に基づいく）
     func performCleanup() async {
-        let selectedAssets = matches.filter { $0.isSelected }.map { $0.localAsset }
+        let selectedItems = matches.filter { $0.isSelected }
+        let selectedAssets = selectedItems.map { $0.localAsset }
+        let savedBytes = selectedItems.reduce(0) { $0 + $1.fileSize }
         let count = selectedAssets.count
         guard count > 0 else { return }
         
@@ -216,10 +320,12 @@ class PhotoScannerViewModel: ObservableObject {
             
             // 成功メッセージ用の状態更新
             self.lastCleanupCount = selectedAssets.count
+            self.lastCleanupSavedBytes = savedBytes
             self.lastActionType = .cleanup
             self.isShowingSuccessMessage = true
             
             recordUsage(count: selectedAssets.count)
+            totalActionsPerformed += 1
             
             logger.info("Cleanup performed: \(self.cleanupMode.rawValue) for \(selectedAssets.count) assets.")
         } catch {
@@ -260,6 +366,7 @@ class PhotoScannerViewModel: ObservableObject {
             self.isShowingSuccessMessage = true
             
             recordUsage(count: selectedAssets.count)
+            totalActionsPerformed += 1
             
             logger.info("Saved \(selectedAssets.count) assets from shared album to local library.")
             

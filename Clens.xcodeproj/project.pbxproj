@@ -6,14 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		BB001122334455667788AA0A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 33AA59FE2F5AA24A008BABA4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 33AA5A052F5AA24A008BABA4;
+			remoteInfo = SharedAlbumCleaner;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		33AA5A062F5AA24A008BABA4 /* SharedAlbumCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedAlbumCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB001122334455667788AA01 /* ClensTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClensTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		33AA5A082F5AA24A008BABA4 /* SharedAlbumCleaner */ = {
+		33AA5A082F5AA24A008BABA4 /* Clens */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SharedAlbumCleaner;
+			path = Clens;
+			sourceTree = "<group>";
+		};
+		BB001122334455667788AA02 /* ClensTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ClensTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +42,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB001122334455667788AA04 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		33AA59FD2F5AA24A008BABA4 = {
 			isa = PBXGroup;
 			children = (
-				33AA5A082F5AA24A008BABA4 /* SharedAlbumCleaner */,
+				33AA5A082F5AA24A008BABA4 /* Clens */,
+				BB001122334455667788AA02 /* ClensTests */,
 				33AA5A072F5AA24A008BABA4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				33AA5A062F5AA24A008BABA4 /* SharedAlbumCleaner.app */,
+				BB001122334455667788AA01 /* ClensTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,7 +86,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				33AA5A082F5AA24A008BABA4 /* SharedAlbumCleaner */,
+				33AA5A082F5AA24A008BABA4 /* Clens */,
 			);
 			name = SharedAlbumCleaner;
 			packageProductDependencies = (
@@ -69,6 +94,29 @@
 			productName = SharedAlbumCleaner;
 			productReference = 33AA5A062F5AA24A008BABA4 /* SharedAlbumCleaner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		BB001122334455667788AA06 /* ClensTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB001122334455667788AA09 /* Build configuration list for PBXNativeTarget "ClensTests" */;
+			buildPhases = (
+				BB001122334455667788AA03 /* Sources */,
+				BB001122334455667788AA04 /* Frameworks */,
+				BB001122334455667788AA05 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BB001122334455667788AA0B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				BB001122334455667788AA02 /* ClensTests */,
+			);
+			name = ClensTests;
+			packageProductDependencies = (
+			);
+			productName = ClensTests;
+			productReference = BB001122334455667788AA01 /* ClensTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,9 +131,13 @@
 					33AA5A052F5AA24A008BABA4 = {
 						CreatedOnToolsVersion = 26.3;
 					};
+					BB001122334455667788AA06 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 33AA5A052F5AA24A008BABA4;
+					};
 				};
 			};
-			buildConfigurationList = 33AA5A012F5AA24A008BABA4 /* Build configuration list for PBXProject "SharedAlbumCleaner" */;
+			buildConfigurationList = 33AA5A012F5AA24A008BABA4 /* Build configuration list for PBXProject "Clens" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -103,12 +155,20 @@
 			projectRoot = "";
 			targets = (
 				33AA5A052F5AA24A008BABA4 /* SharedAlbumCleaner */,
+				BB001122334455667788AA06 /* ClensTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		33AA5A042F5AA24A008BABA4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB001122334455667788AA05 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -125,7 +185,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB001122334455667788AA03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BB001122334455667788AA0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 33AA5A052F5AA24A008BABA4 /* SharedAlbumCleaner */;
+			targetProxy = BB001122334455667788AA0A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		33AA5A0F2F5AA24B008BABA4 /* Debug */ = {
@@ -317,10 +392,57 @@
 			};
 			name = Release;
 		};
+		BB001122334455667788AA07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PTT6AX3CK2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yosuke.ClensTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedAlbumCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SharedAlbumCleaner";
+			};
+			name = Debug;
+		};
+		BB001122334455667788AA08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PTT6AX3CK2;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yosuke.ClensTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedAlbumCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SharedAlbumCleaner";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33AA5A012F5AA24A008BABA4 /* Build configuration list for PBXProject "SharedAlbumCleaner" */ = {
+		33AA5A012F5AA24A008BABA4 /* Build configuration list for PBXProject "Clens" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33AA5A0F2F5AA24B008BABA4 /* Debug */,
@@ -334,6 +456,15 @@
 			buildConfigurations = (
 				33AA5A122F5AA24B008BABA4 /* Debug */,
 				33AA5A132F5AA24B008BABA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB001122334455667788AA09 /* Build configuration list for PBXNativeTarget "ClensTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB001122334455667788AA07 /* Debug */,
+				BB001122334455667788AA08 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

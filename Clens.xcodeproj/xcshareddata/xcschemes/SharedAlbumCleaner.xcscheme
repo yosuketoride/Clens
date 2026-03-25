@@ -18,7 +18,21 @@
                BlueprintIdentifier = "33AA5A052F5AA24A008BABA4"
                BuildableName = "SharedAlbumCleaner.app"
                BlueprintName = "SharedAlbumCleaner"
-               ReferencedContainer = "container:SharedAlbumCleaner.xcodeproj">
+               ReferencedContainer = "container:Clens.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BB001122334455667788AA06"
+               BuildableName = "ClensTests.xctest"
+               BlueprintName = "ClensTests"
+               ReferencedContainer = "container:Clens.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,12 +43,25 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BB001122334455667788AA06"
+               BuildableName = "ClensTests.xctest"
+               BlueprintName = "ClensTests"
+               ReferencedContainer = "container:Clens.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = "en"
+      language = "ja"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -48,7 +75,7 @@
             BlueprintIdentifier = "33AA5A052F5AA24A008BABA4"
             BuildableName = "SharedAlbumCleaner.app"
             BlueprintName = "SharedAlbumCleaner"
-            ReferencedContainer = "container:SharedAlbumCleaner.xcodeproj">
+            ReferencedContainer = "container:Clens.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -65,7 +92,7 @@
             BlueprintIdentifier = "33AA5A052F5AA24A008BABA4"
             BuildableName = "SharedAlbumCleaner.app"
             BlueprintName = "SharedAlbumCleaner"
-            ReferencedContainer = "container:SharedAlbumCleaner.xcodeproj">
+            ReferencedContainer = "container:Clens.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

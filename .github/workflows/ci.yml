@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          XCODE=$(ls /Applications/Xcode*.app | sort -V | tail -1)
+          echo "Using: $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install xcpretty
+        run: gem install xcpretty --no-document
+
+      - name: Find simulator
+        id: sim
+        run: |
+          # Pick the first available iPhone simulator
+          UDID=$(xcrun simctl list devices available -j \
+            | ruby -rjson -e '
+                data = JSON.parse(STDIN.read)
+                best = nil; best_ver = [0,0]
+                data["devices"].each do |runtime, devices|
+                  next unless runtime.include?("iOS") && !devices.empty?
+                  ver = runtime.scan(/\d+/).first(2).map(&:to_i)
+                  if ver <=> best_ver == 1
+                    best_ver = ver; best = devices.first["udid"]
+                  end
+                end
+                puts best || ""
+              ')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Found simulator: $UDID"
+
+      - name: Build & Test
+        run: |
+          UDID="${{ steps.sim.outputs.udid }}"
+          if [ -z "$UDID" ]; then
+            echo "No simulator found — running build-only check."
+            xcodebuild build \
+              -project Clens.xcodeproj \
+              -scheme SharedAlbumCleaner \
+              -destination "generic/platform=iOS Simulator" \
+              -configuration Debug \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGN_IDENTITY="" \
+              | xcpretty
+          else
+            xcodebuild test \
+              -project Clens.xcodeproj \
+              -scheme SharedAlbumCleaner \
+              -destination "platform=iOS Simulator,id=$UDID" \
+              -configuration Debug \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGN_IDENTITY="" \
+              | xcpretty
+          fi
