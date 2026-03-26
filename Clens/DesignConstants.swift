@@ -57,6 +57,11 @@ class HapticManager {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(type)
     }
+    
+    func selection() {
+        let generator = UISelectionFeedbackGenerator()
+        generator.selectionChanged()
+    }
 }
 
 extension Int64 {

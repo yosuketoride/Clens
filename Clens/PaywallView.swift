@@ -1,5 +1,5 @@
 import SwiftUI
-
+import StoreKit
 struct PaywallView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("isPremium") var isPremium: Bool = false
@@ -46,10 +46,10 @@ struct PaywallView: View {
                                     .foregroundStyle(DesignConstants.primaryGradient)
                             }
                             
-                            Text("Clens PRO")
+                            Text("Clens")
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
                             
-                            Text("制限を解除して、iPhoneのストレージを\n最大限まで解放しましょう。")
+                            Text("1日50枚じゃ足りない！\n一気にストレージをスッキリさせませんか？")
                                 .font(.body)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -59,9 +59,9 @@ struct PaywallView: View {
                         
                         // Features List
                         VStack(spacing: 20) {
-                            FeatureRow(icon: "infinity.circle.fill", title: "無制限の整理", description: "1日50枚の制限がなくなり、何枚でも整理可能になります。")
-                            FeatureRow(icon: "bolt.fill", title: "最優先サポート", description: "開発者が優先的にご要望や不具合に対応します。")
-                            FeatureRow(icon: "heart.fill", title: "開発の支援", description: "今後の新機能追加やアップデートの支援になります。")
+                            FeatureRow(icon: "infinity.circle.fill", title: "⚡ 枚数制限なし", description: "一度に何百枚でもスッキリ！\nGB単位で容量を解放できます")
+                            FeatureRow(icon: "tag.fill", title: "💰 ずっと使える買い切り版", description: "毎月の面倒なサブスク課金は不要。\n一度の購入で一生使えます")
+                            FeatureRow(icon: "cup.and.saucer.fill", title: "☕ コーヒー1杯の価格", description: "一生「容量不足」のストレスから解放")
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 10)
@@ -71,13 +71,17 @@ struct PaywallView: View {
                         // Action Areas
                         VStack(spacing: 16) {
                             Button {
-                                // Simulate Purchase
-                                HapticManager.shared.notification(.success)
-                                withAnimation {
-                                    isPremium = true
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    dismiss()
+                                Task {
+                                    do {
+                                        _ = try await StoreManager.shared.purchase()
+                                        HapticManager.shared.notification(.success)
+                                        // StoreManager updates isPremium automatically
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            dismiss()
+                                        }
+                                    } catch {
+                                        HapticManager.shared.notification(.error)
+                                    }
                                 }
                             } label: {
                                 HStack {
@@ -86,9 +90,15 @@ struct PaywallView: View {
                                         Text("アップグレード完了")
                                     } else {
                                         Text("PROにアップグレード")
-                                        Text("¥480 / 買い切り")
-                                            .font(.caption)
-                                            .opacity(0.8)
+                                        if let product = StoreManager.shared.products.first {
+                                            Text("\(product.displayPrice) / 買い切り")
+                                                .font(.caption)
+                                                .opacity(0.8)
+                                        } else {
+                                            Text("¥480 / 買い切り")
+                                                .font(.caption)
+                                                .opacity(0.8)
+                                        }
                                     }
                                 }
                                 .font(.headline.bold())
@@ -102,11 +112,18 @@ struct PaywallView: View {
                             .disabled(isPremium)
                             
                             Button {
-                                // Simulate Restore
-                                HapticManager.shared.notification(.success)
-                                isPremium = true
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    dismiss()
+                                Task {
+                                    do {
+                                        try await StoreManager.shared.restore()
+                                        HapticManager.shared.notification(.success)
+                                        if isPremium {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                                dismiss()
+                                            }
+                                        }
+                                    } catch {
+                                        HapticManager.shared.notification(.error)
+                                    }
                                 }
                             } label: {
                                 Text("購入情報を復元する")

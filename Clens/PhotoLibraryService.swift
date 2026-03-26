@@ -6,6 +6,12 @@ enum PhotoLibraryError: Error {
     case fetchFailed
 }
 
+struct SharedAsset: Sendable {
+    let asset: PHAsset
+    let albumId: String
+    let albumTitle: String
+}
+
 final class PhotoLibraryService: Sendable {
     static let shared = PhotoLibraryService()
     private init() {}
@@ -21,11 +27,11 @@ final class PhotoLibraryService: Sendable {
         }
     }
     
-    func fetchSharedAlbumPhotos() async throws -> [PHAsset] {
+    func fetchSharedAlbumPhotos() async throws -> [SharedAsset] {
         guard await checkPermission() else { throw PhotoLibraryError.permissionDenied }
         
-        return await Task.detached { () -> [PHAsset] in
-            var sharedAssets: [PHAsset] = []
+        return await Task.detached { () -> [SharedAsset] in
+            var sharedAssets: [SharedAsset] = []
             let collections = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumCloudShared, options: nil)
             
             collections.enumerateObjects { collection, _, _ in
@@ -33,8 +39,11 @@ final class PhotoLibraryService: Sendable {
                 fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
                 let assets = PHAsset.fetchAssets(in: collection, options: fetchOptions)
                 
+                let albumId = collection.localIdentifier
+                let albumTitle = collection.localizedTitle ?? "Shared Album"
+                
                 assets.enumerateObjects { asset, _, _ in
-                    sharedAssets.append(asset)
+                    sharedAssets.append(SharedAsset(asset: asset, albumId: albumId, albumTitle: albumTitle))
                 }
             }
             return sharedAssets

@@ -14,14 +14,14 @@ struct OnboardingView: View {
     
     let slides = [
         OnboardingSlide(
-            title: "Clensへようこそ",
-            description: "共有アルバムを活用して、iPhoneのストレージを賢く、安全に整理しましょう。",
+            title: "iPhoneの容量不足、今日でサヨナラ 👋",
+            description: "共有アルバムを使って、大切な写真を守りながら安全にストレージを空けましょう。",
             iconName: "sparkles",
             gradient: DesignConstants.primaryGradient
         ),
         OnboardingSlide(
-            title: "「整理対象」を見つける",
-            description: "すでに共有アルバムにある写真を賢く検知。手元の重複した写真を安全に削除できます。",
+            title: "AIが重複写真を発見",
+            description: "共有アルバムにある写真をAIが探し出し、安全に消して容量を空けます。",
             iconName: "square.stack.3d.up.fill",
             gradient: DesignConstants.secondaryGradient
         ),
@@ -32,9 +32,15 @@ struct OnboardingView: View {
             gradient: LinearGradient(colors: [.blue, .cyan], startPoint: .topLeading, endPoint: .bottomTrailing)
         ),
         OnboardingSlide(
-            title: "安心して整理",
-            description: "削除した写真は「最近削除した項目」に移動されるため、30日以内ならいつでも復元可能です。",
+            title: "間違えても大丈夫",
+            description: "削除した写真は30日間「最近削除した項目」に残ります。間違えて消してもいつでも復元OK！",
             iconName: "checkmark.shield.fill",
+            gradient: DesignConstants.secondaryGradient
+        ),
+        OnboardingSlide(
+            title: "プライバシー保護",
+            description: "すべての解析はオンデバイス(端末内)で行われます。写真は一切外部サーバーには送信されません。",
+            iconName: "lock.shield.fill",
             gradient: LinearGradient(colors: [.green, .teal], startPoint: .topLeading, endPoint: .bottomTrailing)
         )
     ]
