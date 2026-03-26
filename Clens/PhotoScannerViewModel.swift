@@ -80,6 +80,7 @@ class PhotoScannerViewModel: ObservableObject {
     @AppStorage("totalActionsPerformed") var totalActionsPerformed: Int = 0
     @AppStorage("lastReviewRequestDate") var lastReviewRequestDate: Double = 0
     @AppStorage("hasCompletedFirstScan") var hasCompletedFirstScan: Bool = false
+    @Published var hasScannedThisSession: Bool = false
     @AppStorage("totalScanCount") var totalScanCount: Int = 0
     
     // 残り無料枠の計算
@@ -153,6 +154,7 @@ class PhotoScannerViewModel: ObservableObject {
         isScanning = false
         totalScanCount += 1
         hasCompletedFirstScan = true
+        hasScannedThisSession = true
     }
     
     private func applyFiltering() {

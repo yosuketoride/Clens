@@ -36,7 +36,7 @@ jobs:
                 data["devices"].each do |runtime, devices|
                   next unless runtime.include?("iOS") && !devices.empty?
                   ver = runtime.scan(/\d+/).first(2).map(&:to_i)
-                  if ver <=> best_ver == 1
+                  if (ver <=> best_ver) == 1
                     best_ver = ver; best = devices.first["udid"]
                   end
                 end

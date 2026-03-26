@@ -291,13 +291,13 @@ struct ContentView: View {
                     .blur(radius: 40)
                     .opacity(0.3)
                 
-                Image(systemName: viewModel.hasCompletedFirstScan ? "photo.on.rectangle.angled" : "sparkles")
+                Image(systemName: viewModel.hasScannedThisSession ? "photo.on.rectangle.angled" : "sparkles")
                     .font(.system(size: 60))
                     .foregroundStyle(DesignConstants.primaryGradient)
             }
-            
+
             VStack(spacing: 8) {
-                if viewModel.hasCompletedFirstScan {
+                if viewModel.hasScannedThisSession {
                     Text("共有アルバムが見つかりませんでした👀")
                         .font(.title2.bold())
                     Text("共有アルバムを使い始めると\n無料でiPhoneの容量を大幅に節約できます！")
@@ -313,9 +313,9 @@ struct ContentView: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            
+
             // 共有アルバムガイドバナー
-            if viewModel.hasCompletedFirstScan {
+            if viewModel.hasScannedThisSession {
                 Button {
                     HapticManager.shared.trigger(.medium)
                     isShowingGuide = true
